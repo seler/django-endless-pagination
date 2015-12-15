@@ -1,4 +1,5 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
+from pip.req import parse_requirements
 import os
 
 
@@ -47,6 +48,15 @@ class VenvLinkDeleted(object):
             os.symlink(VENV, VENV_LINK)
 
 
+
+
+def get_requirements(filename):
+    install_requires = []
+    for r in parse_requirements(filename, session=False):
+        install_requires.append(str(r.req))
+    return install_requires
+
+
 with VenvLinkDeleted():
     setup(
         name='django-endless-pagination',
@@ -57,13 +67,7 @@ with VenvLinkDeleted():
         author_email='francesco.banconi@gmail.com',
         url='http://github.com/frankban/django-endless-pagination',
         keywords='django pagination ajax',
-        packages=[
-            PROJECT_NAME,
-            '{0}.templatetags'.format(PROJECT_NAME),
-            '{0}.tests'.format(PROJECT_NAME),
-            '{0}.tests.integration'.format(PROJECT_NAME),
-            '{0}.tests.templatetags'.format(PROJECT_NAME),
-        ],
+        packages=find_packages(),
         package_data={PROJECT_NAME: data_files},
         classifiers=[
             'Development Status :: 5 - Production/Stable',
@@ -76,4 +80,5 @@ with VenvLinkDeleted():
             'Programming Language :: Python :: 3',
             'Topic :: Utilities',
         ],
+        install_requires=get_requirements('requirements.txt'),
     )
